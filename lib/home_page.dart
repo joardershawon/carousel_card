@@ -23,8 +23,8 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
 
     final curvedAnim = CurvedAnimation(
       parent: animationController,
-      curve: Curves.bounceIn,
-      reverseCurve: Curves.bounceOut,
+      curve: Curves.easeIn,
+      reverseCurve: Curves.easeOut,
     );
 
     animation = Tween<double>(begin: 0, end: 2 * pi).animate(curvedAnim)
@@ -59,7 +59,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     final size = MediaQuery.of(context).size;
     final gg = animationController.value;
     final scale = gg * (size.width * .2) * pi;
-    final boxSize = scale.clamp(100, 120.0);
+    final boxSize = scale.clamp(80, 120.0);
     final opacity = (gg).clamp(0.0, 1.0);
     // print(boxSize);
     print(gg);
@@ -90,7 +90,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                         Transform(
                           alignment: Alignment.centerLeft,
                           transform: Matrix4.identity()
-                            ..translate((scale * gg), 0.0)
+                            ..translate((scale * (gg * .9)), 0.0)
                             ..rotateY(gg * 3),
                           child: const Text(
                             '🪙',
@@ -108,7 +108,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                             key: UniqueKey(),
                             style: const TextStyle(
                               color: Colors.black,
-                              fontSize: 18,
+                              fontSize: 16,
                               fontWeight: FontWeight.w300,
                             ),
                           ),
