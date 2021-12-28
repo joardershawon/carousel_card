@@ -24,7 +24,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     final curvedAnim = CurvedAnimation(
       parent: animationController,
       curve: Curves.easeIn,
-      reverseCurve: Curves.easeOut,
+      reverseCurve: Curves.easeInBack,
     );
 
     animation = Tween<double>(begin: 0, end: 2 * pi).animate(curvedAnim)
@@ -90,7 +90,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                         Transform(
                           alignment: Alignment.centerLeft,
                           transform: Matrix4.identity()
-                            ..translate((scale * (gg * .9)), 0.0)
+                            ..translate((scale * (gg * .8)), 0.0)
                             ..rotateY(gg * 3),
                           child: const Text(
                             '🪙',
@@ -102,7 +102,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                           ),
                         ),
                         Opacity(
-                          opacity: opacity < .8 ? 0.0 : opacity,
+                          opacity: opacity < .9 ? 0.0 : opacity,
                           child: Text(
                             'Your Balance is : 1M',
                             key: UniqueKey(),
