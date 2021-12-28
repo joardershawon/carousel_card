@@ -1,139 +1,123 @@
-import 'package:carousel_card/mock_data.dart';
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({
-    Key? key,
-  }) : super(key: key);
+class HomePage extends StatefulWidget {
+  const HomePage({Key? key}) : super(key: key);
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  _HomePageState createState() => _HomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateMixin {
+class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin {
   late AnimationController animationController;
-  late Animation animation;
-  late PageController pageController;
-  Duration duration = const Duration(milliseconds: 500);
-
-  double initialPage = 0;
-  double heightFactor = .8;
-  double widthFactor = .9;
-  double viewFraction = 1.0;
-
-  void pageListener() {
-    setState(() {
-      initialPage = pageController.page!;
-    });
-  }
-
+  late Animation<double> animation;
+  Duration duration = const Duration(milliseconds: 700);
   @override
   void initState() {
     super.initState();
     animationController = AnimationController(
-      vsync: this,
       duration: duration,
-    )..addListener(() {});
-    pageController = PageController(
-      initialPage: initialPage.toInt(),
-      viewportFraction: .5,
-    )..addListener(pageListener);
+      vsync: this,
+    );
+
+    final curvedAnim = CurvedAnimation(
+      parent: animationController,
+      curve: Curves.bounceIn,
+      reverseCurve: Curves.bounceOut,
+    );
+
+    animation = Tween<double>(begin: 0, end: 2 * pi).animate(curvedAnim)
+      ..addListener(
+        () {
+          setState(() {});
+        },
+      );
+    // animationController.forward();
+  }
+
+  void animationReset() {
+    if (animationController.isCompleted) {
+      animationController.reverse();
+    } else {
+      animationController.forward();
+      Future.delayed(const Duration(seconds: 5)).then((value) {
+        animationController.reverse();
+      });
+    }
   }
 
   @override
   void dispose() {
-    super.dispose();
-    animationController.removeListener(pageListener);
+    print('dismissed');
     animationController.dispose();
-    pageController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    var items = MockData.mockList;
-    var item;
-    var result = 1.0;
-
     final size = MediaQuery.of(context).size;
+    final gg = animationController.value;
+    final scale = gg * (size.width * .2) * pi;
+    final boxSize = scale.clamp(100, 120.0);
+    final opacity = (gg).clamp(0.0, 1.0);
+    // print(boxSize);
+    print(gg);
     return Scaffold(
       body: SafeArea(
         child: Stack(
           alignment: Alignment.topCenter,
           children: [
-            FractionallySizedBox(
-              heightFactor: .2,
-              widthFactor: .9,
-              child: Container(
-                color: Colors.teal,
-                child: Column(
-                  children: [
-                    Transform(
-                      transform: Matrix4.identity()
-                        ..setEntry(3, 2, .001)
-                        ..translate(25, 0.0),
-                      child: Text(
-                        items[initialPage.toInt()].title.toString(),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            PageView.builder(
-              scrollDirection: Axis.vertical,
-              controller: pageController,
-              itemCount: items.length,
-              itemBuilder: (context, index) {
-                viewFraction = pageController.viewportFraction;
-                item = items[index];
-                result = (index - initialPage - 1) + 1;
-                final value = .05 * result * (initialPage + 1.25) * 5 + 1;
-                final opacity = value.clamp(0.0, 1.0);
-                print(value);
-
-                return Transform(
-                  alignment: Alignment.bottomCenter,
-                  transform: Matrix4.identity()
-                    ..setEntry(3, 2, .001)
-                    ..translate(0.0, size.height / 2.5 * (1 - value).abs())
-                    ..scale(value * opacity),
-                  child: Opacity(
-                    opacity: opacity,
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          pageController.animateToPage(
-                            index,
-                            duration: duration,
-                            curve: Curves.easeInOut,
-                          );
-                        });
-                      },
-                      child: FractionallySizedBox(
-                        heightFactor: heightFactor,
-                        widthFactor: widthFactor,
-                        child: Material(
-                          elevation: 5,
-                          borderRadius: BorderRadius.circular(20),
-                          clipBehavior: Clip.antiAliasWithSaveLayer,
-                          child: Stack(
-                            children: [
-                              Container(
-                                decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                    image: AssetImage('assets/${item.image}'),
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              ),
-                            ],
+            Positioned(
+              top: 50,
+              left: 10,
+              width: scale + boxSize,
+              height: 80,
+              child: Material(
+                // shape: CircleBorder(),
+                color: Colors.white,
+                elevation: 5,
+                borderRadius: BorderRadius.circular(40),
+                clipBehavior: Clip.antiAliasWithSaveLayer,
+                child: InkWell(
+                  onTap: () {
+                    animationReset();
+                  },
+                  child: Center(
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        Transform(
+                          alignment: Alignment.centerLeft,
+                          transform: Matrix4.identity()
+                            ..translate((scale * gg), 0.0)
+                            ..rotateY(gg * 3),
+                          child: const Text(
+                            '🪙',
+                            style: TextStyle(
+                              color: Colors.white70,
+                              fontSize: 55,
+                              fontWeight: FontWeight.w300,
+                            ),
                           ),
                         ),
-                      ),
+                        Opacity(
+                          opacity: opacity < .8 ? 0.0 : opacity,
+                          child: Text(
+                            'Your Balance is : 1M',
+                            key: UniqueKey(),
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w300,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                );
-              },
+                ),
+              ),
             ),
           ],
         ),
