@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -13,6 +14,7 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   late AnimationController animationController;
   late Animation<double> animation;
   Duration duration = const Duration(milliseconds: 700);
+  int counter = 0;
   @override
   void initState() {
     super.initState();
@@ -37,13 +39,18 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
   }
 
   void animationReset() {
-    if (animationController.isCompleted) {
-      animationController.reverse();
+    if (animationController.isAnimating) {
+      return;
     } else {
-      animationController.forward();
-      Future.delayed(const Duration(seconds: 5)).then((value) {
+      if (animationController.isCompleted) {
         animationController.reverse();
-      });
+      } else {
+        counter++;
+        animationController.forward();
+        Future.delayed(const Duration(seconds: 2)).then((value) {
+          animationController.reverse();
+        });
+      }
     }
   }
 
@@ -66,56 +73,84 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     return Scaffold(
       body: SafeArea(
         child: Stack(
-          alignment: Alignment.topCenter,
           children: [
-            Positioned(
-              top: 50,
-              left: 10,
-              width: scale + boxSize,
-              height: 80,
-              child: Material(
-                // shape: CircleBorder(),
-                color: Colors.white,
-                elevation: 5,
-                borderRadius: BorderRadius.circular(40),
-                clipBehavior: Clip.antiAliasWithSaveLayer,
-                child: InkWell(
-                  onTap: () {
-                    animationReset();
-                  },
-                  child: Center(
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        Transform(
-                          alignment: Alignment.centerLeft,
-                          transform: Matrix4.identity()
-                            ..translate((scale * (gg * .8)), 0.0)
-                            ..rotateY(gg * 3),
+            Center(
+              child: SizedBox(
+                height: 200,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    Positioned(
+                      bottom: 30,
+                      child: Transform(
+                        alignment: Alignment.center,
+                        transform: Matrix4.identity()
+                          ..setEntry(3, 2, .001)
+                          ..translate(0.0, -scale / 3)
+                          ..scale(1 - gg),
+                        child: Opacity(
+                          opacity: (1 - opacity * 2).clamp(0.0, 1.0),
                           child: const Text(
-                            '🪙',
-                            style: TextStyle(
-                              color: Colors.white70,
-                              fontSize: 55,
-                              fontWeight: FontWeight.w300,
-                            ),
+                            'Check Your Balance',
                           ),
                         ),
-                        Opacity(
-                          opacity: opacity < .9 ? 0.0 : opacity,
-                          child: Text(
-                            'Your Balance is : 1M',
-                            key: UniqueKey(),
-                            style: const TextStyle(
-                              color: Colors.black,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w300,
-                            ),
-                          ),
-                        ),
-                      ],
+                      ),
                     ),
-                  ),
+                    Positioned(
+                      width: scale + boxSize,
+                      height: 80,
+                      child: Material(
+                        // shape: CircleBorder(),
+                        color: Colors.white,
+                        elevation: 5,
+                        borderRadius: BorderRadius.circular(40),
+                        clipBehavior: Clip.antiAliasWithSaveLayer,
+                        child: InkWell(
+                          onTap: () {
+                            animationReset();
+                          },
+                          child: Center(
+                            child: Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Transform(
+                                  alignment: Alignment.centerLeft,
+                                  transform: Matrix4.identity()
+                                    ..translate((scale * (gg * .8)), 0.0)
+                                    ..rotateY(gg * 3),
+                                  child: const Text(
+                                    '🪙',
+                                    style: TextStyle(
+                                      color: Colors.white70,
+                                      fontSize: 55,
+                                      fontWeight: FontWeight.w300,
+                                    ),
+                                  ),
+                                ),
+                                Transform(
+                                  transform: Matrix4.identity()
+                                    ..setEntry(3, 2, .001)
+                                    ..translate(0.0, 0.0),
+                                  child: Opacity(
+                                    opacity: opacity < .9 ? 0.0 : opacity,
+                                    child: Text(
+                                      'Your Balance is : $counter BDT',
+                                      key: UniqueKey(),
+                                      style: const TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w300,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
