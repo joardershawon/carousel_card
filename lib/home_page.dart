@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -71,91 +70,100 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     // print(boxSize);
     print(gg);
     return Scaffold(
-      body: SafeArea(
-        child: Stack(
-          children: [
-            Center(
-              child: SizedBox(
-                height: 200,
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    Positioned(
-                      bottom: 30,
-                      child: Transform(
-                        alignment: Alignment.center,
-                        transform: Matrix4.identity()
-                          ..setEntry(3, 2, .001)
-                          ..translate(0.0, -scale / 3)
-                          ..scale(1 - gg),
-                        child: Opacity(
-                          opacity: (1 - opacity * 2).clamp(0.0, 1.0),
-                          child: const Text(
-                            'Check Your Balance',
+      body: Stack(
+        alignment: Alignment.bottomCenter,
+        children: [
+          Positioned(
+            bottom: 10,
+            child: SizedBox(
+              height: size.height / (2.2 * pi),
+              width: size.width / (.33 * pi),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Positioned(
+                    bottom: 10,
+                    child: Transform(
+                      alignment: Alignment.center,
+                      transform: Matrix4.identity()
+                        ..setEntry(3, 2, .001)
+                        ..translate(0.0, -scale / 3)
+                        ..scale(1 - gg),
+                      child: Opacity(
+                        opacity: (1 - opacity * 2).clamp(0.0, 1.0),
+                        child: const Text(
+                          'Check Your Balance',
+                        ),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    top: 10,
+                    width: scale + boxSize - 10,
+                    height: 70,
+                    child: Material(
+                      color: Colors.amber[50],
+                      elevation: 5,
+                      borderRadius: BorderRadius.circular(40),
+                      clipBehavior: Clip.antiAliasWithSaveLayer,
+                      child: InkWell(
+                        splashColor: Colors.amber,
+                        onTap: () {
+                          animationReset();
+                        },
+                        child: Center(
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              Transform(
+                                alignment: Alignment.center,
+                                transform: Matrix4.identity()
+                                  ..translate((scale * (gg * .58)), 0.0)
+                                  ..rotateY(gg * 3),
+                                child: const Text(
+                                  '🪙',
+                                  style: TextStyle(
+                                    color: Colors.white70,
+                                    fontSize: 55,
+                                    fontWeight: FontWeight.w300,
+                                  ),
+                                ),
+                              ),
+                              Transform(
+                                transform: Matrix4.identity()
+                                  ..setEntry(3, 2, .001)
+                                  ..translate(0.0, 0.0),
+                                child: Opacity(
+                                  opacity: opacity < .95 ? 0.0 : opacity,
+                                  child: Text(
+                                    'Your Balance is : $counter BDT',
+                                    key: UniqueKey(),
+                                    style: const TextStyle(
+                                      color: Colors.black54,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w500,
+                                      shadows: [
+                                        Shadow(
+                                          color: Colors.white,
+                                          blurRadius: 10,
+                                          offset: Offset(2, 2),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
                     ),
-                    Positioned(
-                      width: scale + boxSize,
-                      height: 80,
-                      child: Material(
-                        // shape: CircleBorder(),
-                        color: Colors.white,
-                        elevation: 5,
-                        borderRadius: BorderRadius.circular(40),
-                        clipBehavior: Clip.antiAliasWithSaveLayer,
-                        child: InkWell(
-                          onTap: () {
-                            animationReset();
-                          },
-                          child: Center(
-                            child: Stack(
-                              alignment: Alignment.center,
-                              children: [
-                                Transform(
-                                  alignment: Alignment.centerLeft,
-                                  transform: Matrix4.identity()
-                                    ..translate((scale * (gg * .8)), 0.0)
-                                    ..rotateY(gg * 3),
-                                  child: const Text(
-                                    '🪙',
-                                    style: TextStyle(
-                                      color: Colors.white70,
-                                      fontSize: 55,
-                                      fontWeight: FontWeight.w300,
-                                    ),
-                                  ),
-                                ),
-                                Transform(
-                                  transform: Matrix4.identity()
-                                    ..setEntry(3, 2, .001)
-                                    ..translate(0.0, 0.0),
-                                  child: Opacity(
-                                    opacity: opacity < .9 ? 0.0 : opacity,
-                                    child: Text(
-                                      'Your Balance is : $counter BDT',
-                                      key: UniqueKey(),
-                                      style: const TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w300,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
