@@ -70,12 +70,12 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
     // print(boxSize);
     print(gg);
     return Scaffold(
-      body: Stack(
-        alignment: Alignment.bottomCenter,
-        children: [
-          Positioned(
-            bottom: 10,
-            child: SizedBox(
+      body: SafeArea(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Spacer(),
+            SizedBox(
               height: size.height / (2.2 * pi),
               width: size.width / (.33 * pi),
               child: Stack(
@@ -162,8 +162,8 @@ class _HomePageState extends State<HomePage> with SingleTickerProviderStateMixin
                 ],
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
